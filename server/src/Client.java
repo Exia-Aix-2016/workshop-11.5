@@ -25,6 +25,7 @@ public class Client implements Runnable, Observer {
         try {
             while (true) {
                 String message = this.in.readLine();
+                System.out.println(message);
                 this.broadcast.notifyObservers(message);
             }
         } catch (Exception e) {

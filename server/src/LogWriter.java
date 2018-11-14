@@ -14,6 +14,7 @@ public class LogWriter implements Logger {
     @Override
     public void log(String message) {
         try {
+
             BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
             Date date = new Date();
             writer.append(date.toString());
