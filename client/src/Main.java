@@ -9,8 +9,9 @@ public class Main {
     private  static Boolean run = false;
     public static void main(String[] args) throws IOException, InterruptedException {
 
+        if(args.length < 1) return;
 
-        Cli.getInstance().onConnexion("Akitoshi", "localhost", 500);
+        Cli.getInstance().onConnexion(args[0], "localhost", 500);
         String message;
         Scanner scanner = new Scanner(System.in);
 
