@@ -61,14 +61,6 @@ public class Client implements Runnable, ISend, IRead, IClientConnection {
 
     @Override
     public void sendMessage(String msg) {
-        if(msg.contentEquals("/quit")){
-            try {
-                this.clientSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return;
-        }
         this.writer.write(this.userName + " : " + msg + "\r\n");
         this.writer.flush();
     }
