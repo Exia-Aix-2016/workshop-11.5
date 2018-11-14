@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
+    private  static Boolean run = false;
     public static void main(String[] args) throws IOException, InterruptedException {
 
 
@@ -14,9 +15,17 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
 
-        while(true){
+
+        while(!run){
+
+            Cli.getInstance().getClient().isDisconnect().ifPresent(Main::setRun);
+
             message = scanner.nextLine();
             Cli.getInstance().sendMessage(message);
         }
+    }
+
+    private static void setRun(Boolean run){
+        run = run;
     }
 }

@@ -10,9 +10,9 @@ public class Client implements Runnable, Observer {
     private Socket socket;
     BufferedReader in;
     PrintWriter out;
-    Observable broadcast;
+    ServerSocketListener broadcast;
 
-    Client(Socket socket, Observable broadcast) throws IOException {
+    Client(Socket socket, ServerSocketListener broadcast) throws IOException {
         this.socket = socket;
         this.broadcast = broadcast;
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -26,7 +26,7 @@ public class Client implements Runnable, Observer {
             while (true) {
                 String message = this.in.readLine();
                 System.out.println(message);
-                this.broadcast.notifyObservers(message);
+                this.broadcast.emit(message);
             }
         } catch (Exception e) {
 
@@ -36,6 +36,7 @@ public class Client implements Runnable, Observer {
     @Override
     public void update(Observable o, Object arg) {
         String message = (String)arg;
-        this.out.write(message);
+        this.out.write(message+"\r\n");
+        this.out.flush();
     }
 }

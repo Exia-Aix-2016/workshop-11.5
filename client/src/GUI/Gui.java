@@ -1,6 +1,7 @@
 package GUI;
 
 import client.Client;
+import client.IClientConnection;
 
 import java.io.IOException;
 
@@ -17,6 +18,10 @@ public abstract class Gui implements IDisplay, ISend {
         }
         Thread t = new Thread(client);
         t.start();
+    }
+
+   public IClientConnection getClient(){
+        return this.client;
     }
 
 

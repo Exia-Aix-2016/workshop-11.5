@@ -29,7 +29,6 @@ public class Client implements Runnable, ISend, IRead, IClientConnection {
         this.address = address;
         this.port = port;
         this.userName = userName;
-
     }
 
     @Override
@@ -37,41 +36,45 @@ public class Client implements Runnable, ISend, IRead, IClientConnection {
 
         try {
             this.clientSocket = new Socket(this.address, this.port);
-        } catch (IOException e) {
-            this.printer.displayMessage("unable to connect !");
-        }
-        try {
             this.writer = new PrintWriter(this.clientSocket.getOutputStream());
             this.reader = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        while (!this.clientSocket.isClosed()){
-            this.readMessage().ifPresent(this.printer::displayMessage);
+            this.printer.displayMessage("unable to connect !");
+            return;
+
         }
 
+        while (!this.clientSocket.isClosed()){
+           this.readMessage().ifPresent(this.printer::displayMessage);
+        }
     }
     @Override
     public synchronized void closeConnection() throws IOException {
         this.clientSocket.close();
     }
 
-   public synchronized boolean  isDisconnect(){
-        return this.clientSocket.isClosed();
+   public synchronized Optional<Boolean>  isDisconnect(){
+        if(this.clientSocket == null) return Optional.empty();
+        return Optional.of(this.clientSocket.isClosed());
     }
 
 
     @Override
     public void sendMessage(String msg) {
-        if(this.clientSocket.isClosed()) return;
+        if(msg.contentEquals("/quit")){
+            try {
+                this.clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
         this.writer.write(this.userName + " : " + msg + "\r\n");
         this.writer.flush();
     }
 
     @Override
     public Optional<String> readMessage() {
-        if(this.clientSocket.isClosed()) return Optional.empty();
         try {
             if(!reader.ready()) return Optional.empty();
             return Optional.of(this.reader.readLine());
