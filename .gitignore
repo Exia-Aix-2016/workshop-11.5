@@ -27,3 +27,5 @@ client/\.idea/
 server/\.idea/
 
 Log\.txt
+
+\.idea/workspace\.xml

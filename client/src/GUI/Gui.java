@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public abstract class Gui implements IDisplay, ISend {
 
-
     protected Client client;
     public   void onConnexion(final String pseudo, final String address, final int port) throws IOException {
         if(client == null){

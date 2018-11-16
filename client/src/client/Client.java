@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Client implements Runnable, ISend, IRead, IClientConnection {
 
@@ -22,7 +25,8 @@ public class Client implements Runnable, ISend, IRead, IClientConnection {
     private String address;
     private int port;
     private IDisplay printer;
-
+    private Cypher cypher = new Base64Cypher();
+    private Pattern messagePattern = Pattern.compile("(\\w*)\\s:\\s(.*)");
 
     public Client(IDisplay printer, final String userName, final String address, final int port){
         this.printer = printer;
@@ -61,7 +65,8 @@ public class Client implements Runnable, ISend, IRead, IClientConnection {
 
     @Override
     public void sendMessage(String msg) {
-        this.writer.write(this.userName + " : " + msg + "\r\n");
+        String message = this.cypher.encode(msg);
+        this.writer.write(this.userName + " : " + message + "\r\n");
         this.writer.flush();
     }
 
@@ -69,7 +74,12 @@ public class Client implements Runnable, ISend, IRead, IClientConnection {
     public Optional<String> readMessage() {
         try {
             if(!reader.ready()) return Optional.empty();
-            return Optional.of(this.reader.readLine());
+            String message = this.reader.readLine().replaceAll("[\n\r]", "");
+            Matcher m = this.messagePattern.matcher(message);
+            m.find();
+            String user = m.group(1);
+            String text = m.group(2);
+            return Optional.of(user + " : " +this.cypher.decode(text));
         } catch (IOException e) {
             System.out.println(e.toString());
             return Optional.empty();
