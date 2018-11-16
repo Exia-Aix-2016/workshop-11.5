@@ -1,9 +1,8 @@
 import GUI.Cli;
-import GUI.Gui;
-import client.Client;
 
 import java.io.IOException;
 import java.util.Scanner;
+
 
 public class Main {
     private  static Boolean run = false;
